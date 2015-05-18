@@ -1,5 +1,5 @@
 TARGET = discreta
-SOURCE = main.c API.c
+SOURCE =  API.c
 OBJECT = $(SOURCE:.c=.o )
 FLAG = -std=c99 -Wall -Werror -Wextra
 CC = gcc
