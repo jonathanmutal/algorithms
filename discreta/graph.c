@@ -4,10 +4,11 @@
 struct GrafSt {
    u32 *list_ady_vert
    u32 *orden
-   u32 *coloreo
    u32 *tabla_trad
+   unsigned int *coloreo
    unsigned int *grado
    unsigned int colores_usados
+   unsigned int n,m;
 };
 
 GrafP NuevoGraf(void) {
@@ -17,7 +18,9 @@ GrafP NuevoGraf(void) {
     return (GP);
 }
 
-int DestruirGraf(GrafP G);
+int DestruirGraf(GrafP G) {
+
+}
 
 int LeerGrafo(GrafP G) {
     unsigned int n, m;
@@ -30,7 +33,7 @@ int LeerGrafo(GrafP G) {
     flag = 1;
 
     
-    tabla_aux = calloc(n + 1, sizeof(* u32));
+    tabla_aux = calloc(n + 1, sizeof(unsigned int));
 
     G->list_ady_vert = calloc(n + 1, sizeof(* u32));
     G->orden = calloc(n + 1, sizeof(u32));
@@ -39,15 +42,15 @@ int LeerGrafo(GrafP G) {
     G->grado = calloc(n + 1, sizeof(u32));
     G->colores_usados = 0;
 
-    for(int i = 1; i <= n; i++) {
+    for(u32 i = 1; i <= n; i++) {
         tabla_aux[i] = 30;
     }
 
-    for(int i = 1; i <= n; i++) {
+    for(u32 i = 1; i <= n; i++) {
         G->list_ady_vert[i] = calloc(30, sizeof(u32));
     }
 
-    for(int i = 1; i <= tam; i++) {
+    for(u32 i = 1; i <= tam; i++) {
         if(tabla_trad[i] == izq) {
             trad_izq = i;
             break;
@@ -70,29 +73,42 @@ int LeerGrafo(GrafP G) {
         tam = tam + 1;   
     }
 
-    int i = 0;
-    int flag = 1
-    while( i < grado[izq_trad] && flag) {
-        if(tabla_trad[izq_trad][i] == trad_der)
-            flag = 0;     
+
+    if(tabla_aux[izq_trd] == grado[izq_trad]) {
+       G->list_ady_vert[izq_trad] = realloc(30, sizeof(u32));/*ver bien*/
     }
-    if(flag) {
-        if(tabla_aux[i] == grado[i]) {
-            G->list_ady_vert[izq_trad] = realloc(30, sizeof(u32));/*ver bien*/
-        }
-        grado[izq_trad] = grado[izq_trad] + 1;
-        G->list_ady_vert[izq_trad][grado[izq_trad]] = der_trad;
+    grado[izq_trad] = grado[izq_trad] + 1;
+    G->list_ady_vert[izq_trad][grado[izq_trad]] = der_trad;
             
     }
 
-    
+    if(tabla_aux[der_trad] == grado[der_trad]) {
+       G->list_ady_vert[der_trad] = realloc(30, sizeof(u32));/*ver bien*/
+    }
+    grado[izq_trad] = grado[der_trad] + 1;
+    G->list_ady_vert[der_trad][grado[der_trad]] = izq_trad;
+            
+    }    
 
             
 
         
 }
 
-int ImprimeGrafo(GrapfP)
+int ImprimeGrafo(GrafP G) {
+    u32 temp;
+
+    printf("p edge %u %u\n", n, m);
+
+    for(int i = 1, i <= n; i++) {
+        for (int j = 0 ; j < G->grado[i]; j++) {    
+            if(i < G->list_ady_vert[i][j]) {
+                printf("e %u %u\n", G->tabla_trad[i], G->tabla_trad[G->list_ady_vert[i][j]]);             
+            }    
+        }            
+    }
+    return 1;
+}
 
 u32 NumeroVerticesDeColor(GrapP G, u32 i)
 
