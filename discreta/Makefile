@@ -1,11 +1,8 @@
 TARGET = discreta
-SOURCE =  API.c
+SOURCE =  API.c main.c
 OBJECT = $(SOURCE:.c=.o )
-FLAG = -std=c99 -Wall -Werror -Wextra
+FLAG = -std=c99 -Wall -Werror -Wextra -g
 CC = gcc
-
-all: $(TARGET)
-	./$(TARGET)
 
 $(TARGET): object
 	$(CC) $(FLAG) -o $@ $(OBJECT)
