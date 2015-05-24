@@ -81,6 +81,17 @@ void radixSort(u32 *array, u32 *orden, u32 size){
 
 }
 
-void radix(u32 *array, u32 *orden, u32 size){
+void radix(u32 *array, u32 *orden, u32 size) {
   radixSort(array, orden, size);
+}
+
+void radix_rever(u32 *array, u32 *orden, u32 size) {
+  radix(array, orden, size);
+  u32 tmp = 0;
+  for(u32 i = 1, j = size; i <= size/2 && j > size/2; i++, j--){
+    tmp = orden[i];
+    orden[i] = orden[j];
+    orden[j] = tmp;
+  }
+  printOrden(orden, size);
 }

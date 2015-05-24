@@ -212,5 +212,10 @@ u32 Greedy(GrafP G) {
 }
 
 void OrdenWelshPowell(GrafP G) {
-    radix(G->grado, G->orden, G->n);
+    radix_rever(G->grado, G->orden, G->n);
+}
+
+
+void Revierte(GrafP G) {
+    radix_rever(G->coloreo, G->orden, G->n);
 }

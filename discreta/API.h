@@ -32,4 +32,10 @@ void radix(u32 *array, u32 *orden, u32 size);
 
 void radix_rever(u32 *array, u32 *orden, u32 size);
 
+void GrandeChico(GrafP G);
+
+void ChicoGrande(GrafP G);
+
+void Revierte(GrafP G);
+
 #endif
