@@ -1,5 +1,5 @@
 TARGET = discreta
-SOURCE =  API.c main.c
+SOURCE =  API.c main.c radixsort.c
 OBJECT = $(SOURCE:.c=.o )
 FLAG = -std=c99 -Wall -Werror -Wextra -g
 CC = gcc

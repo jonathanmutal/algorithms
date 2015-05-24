@@ -135,7 +135,7 @@ u32 NumeroVerticesDeColor(GrafP G, u32 i) {
     u32 ncolores = 0;
     for(u32 j = 1; j <= G->n; j++) {
         if(G->coloreo[j] == i){
-            ncolores += 1;            
+            ncolores += 1;
         }
     }
     return ncolores;
@@ -167,4 +167,50 @@ u32 ImprimirColor(GrafP G, u32 i) {
 
 u32 CantidadDeColores(GrafP G) {
     return G->colores_usados;
+}
+
+u32 Greedy(GrafP G) {
+    G->coloreo[G->orden[1]] = 1;
+    G->colores_usados = 1;
+
+    u32 pos = 0;
+    u32 *aux = calloc(G->n + 1, sizeof(u32));
+
+    for(u32 i = 1; i <= G->n; i++){
+
+        pos = 0;
+
+        for(u32 j = 0; j < G->grado[G->orden[i]]; j++){
+            if(G->orden[G->list_ady_vert[i][j]] < i) {
+                aux[G->coloreo[G->list_ady_vert[i][j]]] = G->coloreo[G->list_ady_vert[i][j]];
+            }
+        }
+
+        for(u32 j = 1; j <= G->colores_usados; j++){
+            if(aux[j] == 0) {
+                G->coloreo[G->orden[i]] = j;
+                pos = j;
+                break;
+            } else {
+                aux[j] = 0;
+            }
+        }
+
+        if(pos == 0) {
+            G->colores_usados += 1;
+            G->coloreo[i] = G->colores_usados;
+        }
+
+        for(u32 j = pos; j<= G->colores_usados; j ++) {
+            aux[j] = 0;
+        }
+    }
+
+    free(aux);
+    aux = NULL;
+    return G->colores_usados;
+}
+
+void OrdenWelshPowell(GrafP G) {
+    radix(G->grado, G->orden, G->n);
 }

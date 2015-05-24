@@ -23,4 +23,13 @@ u32 NumeroVerticesDeColor(GrafP G, u32 i);
 u32 ImprimirColor(GrafP G, u32 i);
 
 u32 CantidadDeColores(GrafP G);
+
+u32 Greedy(GrafP G);
+
+void OrdenWelshPowell(GrafP G);
+
+void radix(u32 *array, u32 *orden, u32 size);
+
+void radix_rever(u32 *array, u32 *orden, u32 size);
+
 #endif
