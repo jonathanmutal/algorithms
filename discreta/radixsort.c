@@ -93,5 +93,4 @@ void radix_rever(u32 *array, u32 *orden, u32 size) {
     orden[i] = orden[j];
     orden[j] = tmp;
   }
-  printOrden(orden, size);
 }
