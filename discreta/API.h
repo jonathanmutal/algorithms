@@ -28,14 +28,22 @@ u32 Greedy(GrafP G);
 
 void OrdenWelshPowell(GrafP G);
 
+void ChicoGrande(GrafP G);
+
+void GrandeChico(GrafP G);
+
+void Revierte(GrafP G);
+
 void radix(u32 *array, u32 *orden, u32 size);
 
 void radix_rever(u32 *array, u32 *orden, u32 size);
 
-void GrandeChico(GrafP G);
+void radix_mod(u32 **array, u32 size);
 
-void ChicoGrande(GrafP G);
+void radix_mod_rever(u32 **array, u32 size);
 
-void Revierte(GrafP G);
+void printArray(u32 **array, int mode, u32 size);
+
+void printOrden(u32 *array, u32 size);
 
 #endif

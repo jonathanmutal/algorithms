@@ -57,6 +57,7 @@ int LeerGrafo(GrafP G) {
       tabla_aux[i] = 30;
       G->list_ady_vert[i] = calloc(30, sizeof(u32));
       G->coloreo[i] = i;
+      G->orden[i] = i;
   }
 
   while((c = getc(stdin)) != -1){
@@ -214,6 +215,66 @@ u32 Greedy(GrafP G) {
 
 void OrdenWelshPowell(GrafP G) {
     radix_rever(G->grado, G->orden, G->n);
+}
+
+void ChicoGrande(GrafP G) {
+
+    u32 *aux[G->colores_usados + 1];
+
+
+    for(u32 i = 1; i <= G->colores_usados; i++){
+        aux[i] = calloc(2, sizeof(u32));
+        aux[i][0] = i;
+    }
+
+    for(u32 i = 1; i <= G->n; i++)
+        aux[G->coloreo[i]][1] += 1;
+
+    radix_mod(aux, G->colores_usados);
+
+    for(u32 i = 2; i <= G->colores_usados; i ++)
+        aux[i][1] += aux[i - 1][1];
+
+    for(u32 i = 1; i <= G->colores_usados; i++) {
+
+        for(u32 j = 1; j <= G->n; j++) {
+            if(aux[i][0] == G->coloreo[j]) {
+                G->orden[aux[i][1]--] = j;
+            }
+        }
+
+        free(aux[i]);
+    }
+}
+
+void GrandeChico(GrafP G) {
+
+    u32 *aux[G->colores_usados + 1];
+
+
+    for(u32 i = 1; i <= G->colores_usados; i++){
+        aux[i] = calloc(2, sizeof(u32));
+        aux[i][0] = i;
+    }
+
+    for(u32 i = 1; i <= G->n; i++)
+        aux[G->coloreo[i]][1] += 1;
+
+    radix_mod_rever(aux, G->colores_usados);
+
+    for(u32 i = 2; i <= G->colores_usados; i ++)
+        aux[i][1] += aux[i - 1][1];
+
+    for(u32 i = 1; i <= G->colores_usados; i++) {
+
+        for(u32 j = 1; j <= G->n; j++) {
+            if(aux[i][0] == G->coloreo[j]) {
+                G->orden[aux[i][1]--] = j;
+            }
+        }
+
+        free(aux[i]);
+    }
 }
 
 void Revierte(GrafP G) {
