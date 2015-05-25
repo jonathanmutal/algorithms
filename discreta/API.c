@@ -176,14 +176,15 @@ u32 Greedy(GrafP G) {
     u32 pos = 0;
     u32 *aux = calloc(G->n + 1, sizeof(u32));
 
+    for(u32 i = 1; i <= G->n; i++)
+        G->coloreo[i] = 0;
+
     for(u32 i = 1; i <= G->n; i++){
 
         pos = 0;
 
         for(u32 j = 0; j < G->grado[G->orden[i]]; j++){
-            if(G->orden[G->list_ady_vert[i][j]] < i) {
-                aux[G->coloreo[G->list_ady_vert[i][j]]] = G->coloreo[G->list_ady_vert[i][j]];
-            }
+            aux[G->coloreo[G->list_ady_vert[G->orden[i]][j]]] = G->coloreo[G->list_ady_vert[G->orden[i]][j]];
         }
 
         for(u32 j = 1; j <= G->colores_usados; j++){
@@ -198,10 +199,10 @@ u32 Greedy(GrafP G) {
 
         if(pos == 0) {
             G->colores_usados += 1;
-            G->coloreo[i] = G->colores_usados;
+            G->coloreo[G->orden[i]] = G->colores_usados;
         }
 
-        for(u32 j = pos; j<= G->colores_usados; j ++) {
+        for(u32 j = pos; j <= G->colores_usados; j ++) {
             aux[j] = 0;
         }
     }
@@ -214,7 +215,6 @@ u32 Greedy(GrafP G) {
 void OrdenWelshPowell(GrafP G) {
     radix_rever(G->grado, G->orden, G->n);
 }
-
 
 void Revierte(GrafP G) {
     radix_rever(G->coloreo, G->orden, G->n);
