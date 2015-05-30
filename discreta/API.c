@@ -212,7 +212,7 @@ u32 Greedy(GrafP G) {
 }
 
 void OrdenWelshPowell(GrafP G) {
-    radix_rever(G->grado, G->orden, G->n);
+    radix(G->grado, G->orden, G->n);
 }
 
 void ChicoGrande(GrafP G) {
@@ -276,7 +276,7 @@ void GrandeChico(GrafP G) {
 }
 
 void Revierte(GrafP G) {
-    radix_rever(G->coloreo, G->orden, G->n);
+    radix(G->coloreo, G->orden, G->n);
 }
 
 u32 greedy_min_col(GrafP G , u32 vertice, u32 *tabla_aux) {

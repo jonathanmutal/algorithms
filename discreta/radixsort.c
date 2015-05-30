@@ -54,8 +54,8 @@ void radixSort(u32 *array, u32 *orden, u32 size){
     for (i = 1; i <= size; i++)
       bucket[((array_aux[i][1] / significantDigit) % 10) + 1]++;
 
-    for (i = 2; i < 11; i++)
-      bucket[i] += bucket[i - 1];
+    for (i = 10; i > 1; i--)
+      bucket[i - 1] += bucket[i];
 
     for (i = size; i > 0; i--){
       semiSorted[bucket[((array_aux[i][1] / significantDigit) % 10) + 1]][0] = array_aux[i][0];
@@ -85,12 +85,3 @@ void radix(u32 *array, u32 *orden, u32 size) {
   radixSort(array, orden, size);
 }
 
-void radix_rever(u32 *array, u32 *orden, u32 size) {
-  radix(array, orden, size);
-  u32 tmp = 0;
-  for(u32 i = 1, j = size; i <= size/2 && j > size/2; i++, j--){
-    tmp = orden[i];
-    orden[i] = orden[j];
-    orden[j] = tmp;
-  }
-}
