@@ -26,6 +26,8 @@ u32 CantidadDeColores(GrafP G);
 
 u32 Greedy(GrafP G);
 
+u32 DSATUR(GrafP G);
+
 void OrdenWelshPowell(GrafP G);
 
 void ChicoGrande(GrafP G);

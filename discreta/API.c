@@ -41,7 +41,7 @@ int LeerGrafo(GrafP G) {
   }
 
   fscanf(stdin, "%s" "%u" "%u", edge, &n, &m);
-
+  
   G->n = n;
   G->m = m;
   G->list_ady_vert = calloc(n + 1, sizeof(u32*));
@@ -60,11 +60,10 @@ int LeerGrafo(GrafP G) {
       G->orden[i] = i;
   }
 
-  while((c = getc(stdin)) != -1){
+  for(u32 i = 0; i < G->m ; i++) {
 
-    if (c == 'e'){
-      fscanf(stdin, "%u" "%u", &izq, &der);
 
+      fscanf(stdin,"%s" "%u" "%u", edge, &izq, &der);
       trad_izq = 0;
       trad_der = 0;
 
@@ -111,7 +110,6 @@ int LeerGrafo(GrafP G) {
       G->list_ady_vert[trad_der][G->grado[trad_der]] = trad_izq;
       G->grado[trad_der] = G->grado[trad_der] + 1;
 
-    }
   }
     
   free(tabla_aux);
@@ -322,7 +320,7 @@ u32 DSATUR (GrafP G) {
     
     /*Inicializo el coloreo en 0*/
     for(u32 i = 1; i <= G->n; i++) {
-        G->coloreo[i] = 0;    
+        G->coloreo[i] = 0;
     } 
     G->colores_usados = 0;
 
@@ -346,7 +344,7 @@ u32 DSATUR (GrafP G) {
             }
         }
 
-        /*coloreo el vertice con de la forma greedy*/
+        /*coloreo el vertice de la forma greedy*/
         vertice = max;
         G->coloreo[vertice] = greedy_min_col(G, vertice, tabla_aux);
         coloractual = G->coloreo[vertice];
