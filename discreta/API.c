@@ -280,3 +280,113 @@ void GrandeChico(GrafP G) {
 void Revierte(GrafP G) {
     radix_rever(G->coloreo, G->orden, G->n);
 }
+
+u32 greedy_min_col(GrafP G , u32 vertice, u32 *tabla_aux) {
+    u32 color = 0;
+    for(u32 i = 0; i < G->grado[vertice]; i++) {
+
+        tabla_aux[G->coloreo[G->list_ady_vert[vertice][i]]] = G->coloreo[G->list_ady_vert[vertice][i]];
+    }
+
+    for(u32 i = 1; i <= G->colores_usados; i++) {
+        if(tabla_aux[i] == 0) {
+            color = i;
+            break;
+        }
+    }
+    if(color == 0){
+        color = G->colores_usados + 1;
+    }
+    for(u32 i = 1; i <= G->colores_usados; i++) {
+        tabla_aux[i] = 0;
+    }
+    
+    return color;
+
+}
+
+u32 DSATUR (GrafP G) {
+    u32 *dsatur;
+    u32 *tabla_aux;
+    u32 vertice;        
+    u32 coloractual;
+    u32 color_nuevo;
+
+    /* alojo memoria para llevar el dsatur */
+
+    dsatur = calloc(G->n + 1, sizeof(u32));
+    tabla_aux = calloc(G->n + 1, sizeof(u32));
+
+    /*---------------------------------------*/
+
+    
+    /*Inicializo el coloreo en 0*/
+    for(u32 i = 1; i <= G->n; i++) {
+        G->coloreo[i] = 0;    
+    } 
+    G->colores_usados = 0;
+
+    /*Ordeno los vertices por grado*/
+
+    OrdenWelshPowell(G);
+
+    /*Coloreo dsatur*/     
+    for (u32 i = 1 ; i <= G->n ; i++) { 
+
+       /* busqueda del vertice de mayor dsatur y grado */
+        u32 max;
+        max = G->orden[1];
+
+        for(u32 j = 1; j <= G->n; j++) {
+            if((G->coloreo[G->orden[j]] == 0) && dsatur[max] < dsatur[G->orden[j]]) {
+                max = G->orden[j];
+                if(dsatur[max] == G->colores_usados) {
+                    break;
+                }
+            }
+        }
+
+        /*coloreo el vertice con de la forma greedy*/
+        vertice = max;
+        G->coloreo[vertice] = greedy_min_col(G, vertice, tabla_aux);
+        coloractual = G->coloreo[vertice];
+
+        /*verifico si es un color nuevo y aumento colores usados en dicho caso*/
+
+        if(G->colores_usados < G->coloreo[vertice]) {
+            G->colores_usados+= 1;
+            color_nuevo = 1;
+        } else { 
+            color_nuevo = 0;
+        }
+
+        /*actualización del dsatur de cada vecino del vertice*/
+        for(u32 j = 0; j < G->grado[vertice]; j++) {
+            u32 vec = G->list_ady_vert[vertice][j];
+            u32 actualizar = 0;
+            
+            if(G->coloreo[vec] == 0){
+                actualizar = 1;
+            }
+            
+            if(!color_nuevo && actualizar) {    
+                for(u32 i = 0; i < G->grado[vec] ; i++) {     
+                    if(G->list_ady_vert[vec][i] == vertice || (G->coloreo[G->list_ady_vert[vec][i]] == coloractual)) {
+                        actualizar = 0;
+                        break;
+                    }
+                }
+            }
+                        
+            if(actualizar) {
+                dsatur[vec] = dsatur[vec] + 1;
+            }
+
+        }
+    }
+    
+    free(dsatur);
+    free(tabla_aux);
+
+    return G->colores_usados;    
+}
