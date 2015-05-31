@@ -35,6 +35,9 @@ int LeerGrafo(GrafP G) {
   u32 trad_der, trad_izq;
   u32 izq,der;
   u32 tam = 0;
+  u32* vertices_der;
+  u32* vertices_izq;
+  u32* tabla_aux;
 
   while((c = getc(stdin)) == 'c'){
     fgets(linea, 80, stdin);
@@ -51,11 +54,11 @@ int LeerGrafo(GrafP G) {
   G->grado = calloc(n + 1, sizeof(u32));
   G->colores_usados = n;
 
-  u32 *tabla_aux = calloc(n + 1, sizeof(u32));
+  vertices_izq = calloc(m, sizeof(u32));
+  vertices_der = calloc(m, sizeof(u32));
+  tabla_aux = calloc(n + 1, sizeof(u32));
 
   for(u32 i = 1; i <= G->n; i++) {
-      tabla_aux[i] = 30;
-      G->list_ady_vert[i] = calloc(30, sizeof(u32));
       G->coloreo[i] = i;
       G->orden[i] = i;
   }
@@ -64,58 +67,69 @@ int LeerGrafo(GrafP G) {
 
 
       fscanf(stdin,"%s" "%u" "%u", edge, &izq, &der);
+
       trad_izq = 0;
       trad_der = 0;
 
+
       for(u32 i = 1; i <= tam; i++) {
-        if(G->tabla_trad[i] == izq) {
-            trad_izq = i;
-            break;
-        }
+          if(G->tabla_trad[i] == izq) {
+              trad_izq = i;
+              G->grado[trad_izq] = G->grado[trad_izq] + 1;
+              break;
+          }
       }
 
       if(trad_izq == 0) {
-        tam += 1;   
-        G->tabla_trad[tam] = izq;
-        trad_izq = tam;
+          tam += 1;   
+          G->tabla_trad[tam] = izq;
+          trad_izq = tam;
+          G->grado[trad_izq] = G->grado[trad_izq] + 1;
+        
       }
 
+      vertices_izq[i] = trad_izq; 
 
       for(u32 i = 1; i <= tam; i++) {
-        if(G->tabla_trad[i] == der) {
-          trad_der = i;
-          break;
-        }
+          if(G->tabla_trad[i] == der) {
+              trad_der = i;
+              G->grado[trad_der] = G->grado[trad_der] + 1;
+              break;
+          }
       }
-
+                
       if(trad_der == 0) {
           tam += 1;   
           G->tabla_trad[tam] = der;
           trad_der = tam;
+          G->grado[trad_der] = G->grado[trad_der] + 1;
       }
 
-
-      if(tabla_aux[trad_izq] == G->grado[trad_izq]) {
-         tabla_aux[trad_izq] += 30;
-         G->list_ady_vert[trad_izq] = realloc(G->list_ady_vert[trad_izq], tabla_aux[trad_izq] * sizeof(u32));
-      }
-      G->list_ady_vert[trad_izq][G->grado[trad_izq]] = trad_der;
-      G->grado[trad_izq] = G->grado[trad_izq] + 1;
-
-
-      if(tabla_aux[trad_der] == G->grado[trad_der]) {
-         tabla_aux[trad_der] += 30;
-         G->list_ady_vert[trad_der] = realloc(G->list_ady_vert[trad_der], tabla_aux[trad_der] * sizeof(u32));
-      }
-      G->list_ady_vert[trad_der][G->grado[trad_der]] = trad_izq;
-      G->grado[trad_der] = G->grado[trad_der] + 1;
-
+      vertices_der[i] = trad_der;   
   }
-    
+  
+  for(u32 i = 1; i <= G->n; i++) {
+      G->list_ady_vert[i] = calloc(G->grado[i], sizeof(u32));
+    }
+   
+  for(u32 i = 0; i < G->m ; i++) {
+      izq = vertices_izq[i];
+      der = vertices_der[i];
+
+      G->list_ady_vert[izq][tabla_aux[izq]] = der;
+      tabla_aux[izq] = tabla_aux[izq] + 1;
+
+      G->list_ady_vert[der][tabla_aux[der]] = izq;
+      tabla_aux[der] = tabla_aux[der] + 1;
+      
+      }
+ 
   free(tabla_aux);
-  tabla_aux = NULL;
+  free(vertices_izq);
+  free(vertices_der);
   return n;
 }
+
 
 int ImprimeGrafo(GrafP G) {
     printf("p edge %u %u\n", G->n, G->m);
