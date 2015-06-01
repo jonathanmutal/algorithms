@@ -186,19 +186,33 @@ u32 Greedy(GrafP G) {
     G->coloreo[G->orden[1]] = 1;
     G->colores_usados = 1;
 
-    u32 pos = 0;
-    u32 *aux = calloc(G->n + 1, sizeof(u32));
+/** -------------------------------------- */
 
+    u32 pos = 0; // Para ayudarnos a encontrar el color.
+    u32 *aux = calloc(G->n + 1, sizeof(u32)); // Tabla aux donde se almacenara los colores ya usados.
+
+/** -------------------------------------- */
+
+    // Dejamos sin color a todos los vertices
     for(u32 i = 1; i <= G->n; i++)
         G->coloreo[i] = 0;
 
+    // Recorremos todos los vertices. Coloreando de acuerdo al orden.
     for(u32 i = 1; i <= G->n; i++){
 
         pos = 0;
 
+        // Dado un vertice por el orden, procesamos los vecinos de esté vertice.
+        // Agregamos los colores al arreglo auxiliar. Pos "i" almacenamos el color "i".
+        // Las posiciones "i" que tengan 0, son colores que no se han usado.
+
         for(u32 j = 0; j < G->grado[G->orden[i]]; j++){
             aux[G->coloreo[G->list_ady_vert[G->orden[i]][j]]] = G->coloreo[G->list_ady_vert[G->orden[i]][j]];
         }
+
+        // Buscamos en la tabla hasta que haya un color sin usar, es decir hasta que en alguna posición j el valor de
+        // esa casilla sea 0. Mientras tanto, reiniciamos la tabla(rellamos con 0's). Si encontramos la posicion j,
+        // seteamos j a pos, así podemos reiniciarla a partir de allí.
 
         for(u32 j = 1; j <= G->colores_usados; j++){
             if(aux[j] == 0) {
@@ -210,10 +224,14 @@ u32 Greedy(GrafP G) {
             }
         }
 
+        // Si no encontramos la posicion j, añadimos un nuevo color y coloreamos ese vertice con este color.
+
         if(pos == 0) {
             G->colores_usados += 1;
             G->coloreo[G->orden[i]] = G->colores_usados;
         }
+
+        // Reiniciamos la tabla aux, seteando todo en 0.
 
         for(u32 j = pos; j <= G->colores_usados; j ++) {
             aux[j] = 0;
@@ -226,26 +244,44 @@ u32 Greedy(GrafP G) {
 }
 
 void OrdenWelshPowell(GrafP G) {
+    // Comentado en radixsort.c
     radix(G->grado, G->orden, G->n);
 }
 
 void ChicoGrande(GrafP G) {
 
-    u32 *aux[G->colores_usados + 1];
+/** -------------------------------------- */
 
+    u32 *aux[G->colores_usados + 1]; // Auxiliar de tamaño colores_usados + 1(No utilizamos el 0). Lo usamos para contar
+                                     // el número de colores. Es decir en la pos "i" del arreglo sera el color "i". En cada
+                                     // posición(color) almacenaremos el número de vertices con el color de la posición.
+
+/** -------------------------------------- */
+
+    // Aux es un arreglo, donde cada elemento es una t-upla. En la posición 0 de la t-upla ira la posición inicial(color)
+    // y en la 1 ira un valor, en esté caso el número de vertices con ese color.
 
     for(u32 i = 1; i <= G->colores_usados; i++){
         aux[i] = calloc(2, sizeof(u32));
         aux[i][0] = i;
     }
 
+    // Contamos cuantos vertices de cada color hay.
+
     for(u32 i = 1; i <= G->n; i++)
         aux[G->coloreo[i]][1] += 1;
 
+    // Ordenamos por cantidad de color(elemento 2 de la t-upla), de menor a mayor.
+
     radix_mod(aux, G->colores_usados);
+
+    // Aquí sumamos el elemento 2 de la t-upla(cantidad de color) de cada color, con el color anterior.
 
     for(u32 i = 2; i <= G->colores_usados; i ++)
         aux[i][1] += aux[i - 1][1];
+
+    // En esta iteración ordenamos los vertices en orden y liberamos espacio en memoria.
+    // Se ordena de acuerdo a los valores de aux.
 
     for(u32 i = 1; i <= G->colores_usados; i++) {
 
@@ -260,6 +296,7 @@ void ChicoGrande(GrafP G) {
 }
 
 void GrandeChico(GrafP G) {
+    // Idem que ChicoGrande, salvo que revertimos el orden en radix_mod_rever.
 
     u32 *aux[G->colores_usados + 1];
 
@@ -290,6 +327,7 @@ void GrandeChico(GrafP G) {
 }
 
 void Revierte(GrafP G) {
+    // Comentado en radixsort.c
     radix(G->coloreo, G->orden, G->n);
 }
 
@@ -400,5 +438,5 @@ u32 DSATUR (GrafP G) {
     free(dsatur);
     free(tabla_aux);
 
-    return G->colores_usados;    
+    return G->colores_usados;
 }
