@@ -32,16 +32,16 @@ int main(void){
 
     u32 tabla_prob[100];
 
-    for(u32 i = 66; i <= 99; i++)
+    for(u32 i = 66; i <= 99; i++)  // p = 34
         tabla_prob[i] = 1;
     
-    for(u32 i = 30; i <= 65; i++)
+    for(u32 i = 30; i <= 65; i++) // q = 36
         tabla_prob[i] = 2;
 
-    for(u32 i = 10 ; i <= 30 ; i++)
+    for(u32 i = 10 ; i <= 29 ; i++) // r = 20
         tabla_prob[i] = 3;
 
-    for(u32 i = 0 ; i < 10; i++)
+    for(u32 i = 0 ; i < 10; i++) // a = 10
         tabla_prob[i] = 4;
   
 
@@ -73,20 +73,10 @@ int main(void){
             break;
         }
 
-        }
-    
-        printf("Mejor color luego de Greedy iterado 10 veces : %u\n", CantidadDeColores(G));
+    }
 
-//    printf("Grafo Cargado...\n");
-//    printf("Dsatur %u\n", DSATUR(G));
-//    OrdenWelshPowell(G);
-//    printf("GREEDY OrdenWelshPowell: %u\n", Greedy(G));
-//    Revierte(G);
-//    printf("GREEDY Revierte: %u\n", Greedy(G));
-//    GrandeChico(G);
-//    printf("GREEDY GrandeChico: %u\n", Greedy(G));
-//    ChicoGrande(G);
-//    printf("Greedy ChicoGrande: %u\n", Greedy(G));
-//    DestruirGraf(G);
+    printf("Mejor color luego de Greedy iterado 10 veces : %u\n", CantidadDeColores(G));
+
+    DestruirGraf(G);
     return 0;
 }
