@@ -40,11 +40,13 @@ int LeerGrafo(GrafP G) {
   u32* tabla_aux;
 
   while((c = getc(stdin)) == 'c'){
-    fgets(linea, 80, stdin);
+    if(fgets(linea, 80, stdin) == NULL)
+        return -1;
   }
 
-  fscanf(stdin, "%s" "%u" "%u", edge, &n, &m);
-  
+  if(fscanf(stdin, "%s" "%u" "%u", edge, &n, &m) == 0)
+    return -1;
+
   G->n = n;
   G->m = m;
   G->list_ady_vert = calloc(n + 1, sizeof(u32*));
@@ -66,7 +68,8 @@ int LeerGrafo(GrafP G) {
   for(u32 i = 0; i < G->m ; i++) {
 
 
-      fscanf(stdin,"%s" "%u" "%u", edge, &izq, &der);
+      if(fscanf(stdin,"%s" "%u" "%u", edge, &izq, &der) == 0)
+        return -1;
 
       trad_izq = 0;
       trad_der = 0;
