@@ -30,6 +30,53 @@ int main(void){
         return 0;
     }
 
+    u32 tabla_prob[100];
+
+    for(u32 i = 66; i <= 99; i++)
+        tabla_prob[i] = 1;
+    
+    for(u32 i = 30; i <= 65; i++)
+        tabla_prob[i] = 2;
+
+    for(u32 i = 10 ; i <= 30 ; i++)
+        tabla_prob[i] = 3;
+
+    for(u32 i = 0 ; i < 10; i++)
+        tabla_prob[i] = 4;
+  
+
+    srand(time(NULL)); 
+
+    for(u32 i = 1; i <= 10; i++)  {
+        u32 random;
+       
+        random = (rand() % 100);
+        random = tabla_prob[random];
+
+        switch(random) {
+        
+        case 1:
+            GrandeChico(G);
+            Greedy(G);
+            break;
+        case 2:
+            ChicoGrande(G);
+            Greedy(G);
+            break;
+        case 3:
+            Revierte(G);
+            Greedy(G);
+            break;
+        case 4:
+            OrdenAleatorio(G);
+            Greedy(G);
+            break;
+        }
+
+        }
+    
+        printf("Mejor color luego de Greedy iterado 10 veces : %u\n", CantidadDeColores(G));
+
 //    printf("Grafo Cargado...\n");
 //    printf("Dsatur %u\n", DSATUR(G));
 //    OrdenWelshPowell(G);
