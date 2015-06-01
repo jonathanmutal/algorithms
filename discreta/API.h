@@ -1,3 +1,10 @@
+/**
+ * NOMBRE: Incatasciato, Guillermo Luis
+ * MAIL: incatasciato.g.l@gmail.com
+ * NOMBRE: Mutal, Jonathan David
+ * MAIL: jonathanmutal95@gmail.com
+ */
+
 #ifndef _API_H
 #define _API_H
 
@@ -44,9 +51,5 @@ void radix(u32 *array, u32 *orden, u32 size);
 void radix_mod(u32 **array, u32 size);
 
 void radix_mod_rever(u32 **array, u32 size);
-
-void printArray(u32 **array, int mode, u32 size);
-
-void printOrden(u32 *array, u32 size);
 
 #endif
