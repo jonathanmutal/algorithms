@@ -8,26 +8,6 @@
  * Diferencia2: Ordenamos de mayor a menor.
  */
 
-// Para print array(DEBUGEO)
-
-void printArray(u32 **array, int mode, u32 size){
-  
-  u32 i;
-  printf("[ ");
-  for (i = 1; i <= size; i++)
-    printf("%u ", array[i][mode]);
-  printf("]\n");
-}
-
-void printOrden(u32 *array, u32 size){
-  
-  u32 i;
-  printf("[ ");
-  for (i = 1; i <= size; i++)
-    printf("%u ", array[i]);
-  printf("]\n");
-}
-
 u32 findLargestNum(u32 *array, u32 size){
   // Encontrar el número más grande del arrego
 
