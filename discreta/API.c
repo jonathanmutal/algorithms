@@ -32,25 +32,52 @@ int DestruirGraf(GrafP G) {
 }
 
 int LeerGrafo(GrafP G) {
-  char c;
-  char edge[5];
-  char linea[80];
-  u32 n, m;
-  u32 trad_der, trad_izq;
-  u32 izq,der;
-  u32 tam = 0;
-  u32* vertices_der;
-  u32* vertices_izq;
-  u32* tabla_aux;
 
+  /*Leer grafo, aloja el grafo pasado por la entrada stdin en memoria. 
+    Para esto realizamos una traduccion de los vertices para que sus nombres
+    queden entre 1 y n. Hacemos esto para poder indexar la tabla de vertices de 
+    adyacencia por el vertice mismo y tener acceso a la tabla de adyacencia  de
+    manera constante.
+
+    Primero ignora los comentarios si el primer caracter de la linea
+    es 'c'. Una vez que se terminan los comentarios scanea el numero de aristas
+    y vertices. Ya teniendo estos datos puede alojar memoria para las distintas
+    tablas necesarias. Luego entra en un for que va de 1 a la cantidad de aristas,
+    tomando cada arista de la stadin, realizando la traducción para el vertice izquierdo 
+    y derecho, y aumentando el grado de cada vertice en 1, y coloca el vertice izq
+    traducido en una tabla auxiliar vertices_izq y el derecho en otra tabla
+    auxiliar vertices_der, los vertices de un mismo indice en estas tablas representan
+    una arista. Una vez que se tiene  la traducción y el grado de cada vertice se 
+    pide memoria para sus listas de adyacencia de tamaño exacto utilizando el 
+    grado y por ultimo, completo las listas de adyacencias de cada vertice
+    usando los arreglos vertices_der y vertices_izq*/
+
+  char c; // usado para la lectura
+  char edge[5];// usado para la lectura
+  char linea[80]; // usado para la lectura
+  u32 n, m; // numero de vertices y numero de aristas
+  u32 trad_der, trad_izq; // traducción del vertice derecho e izquierdo de la arista
+  u32 izq,der; // vertice izquierdo y derecho de una arista
+  u32 tam = 0; // tamaño de la tabla de traducción (traducidos hasta el momento)
+  u32* vertices_der; // arreglo auxiliar para llevar todos los vertices derechos de las aristas
+  u32* vertices_izq; // arreglo auxiliar para llevar todos los vertices izquierdos de las aristas
+  u32* tabla_aux; // necesaria para saber la posición en la que debo poner un nuevo vertice 
+                  // en la tabla de adyacencia de un vertice
+
+
+
+  /*Ignoro todos los comentarios*/
   while((c = getc(stdin)) == 'c'){
     if(fgets(linea, 80, stdin) == NULL)
         return -1;
   }
 
+  /*Leo la cantidad de vertices y aristas*/
+
   if(fscanf(stdin, "%s" "%u" "%u", edge, &n, &m) == 0)
     return -1;
 
+  /*Ya teniendo el numero de vertices y aristas pido memoria para las tablas */
   G->n = n;
   G->m = m;
   G->list_ady_vert = calloc(n + 1, sizeof(u32*));
@@ -64,21 +91,29 @@ int LeerGrafo(GrafP G) {
   vertices_der = calloc(m, sizeof(u32));
   tabla_aux = calloc(n + 1, sizeof(u32));
 
+
+  /*Genero el coloreo y orden inicial*/
   for(u32 i = 1; i <= G->n; i++) {
       G->coloreo[i] = i;
       G->orden[i] = i;
   }
 
+
+  /*En este for que va de 1 hasta m , voy leyendo cada una 
+    de las aristas de stdin, traduzco los vertices y voy aumentando su grado*/
+ 
+
   for(u32 i = 0; i < G->m ; i++) {
 
-
+      /*leo una arista y coloco los vertices en izq y der*/
       if(fscanf(stdin,"%s" "%u" "%u", edge, &izq, &der) == 0)
         return -1;
+
 
       trad_izq = 0;
       trad_der = 0;
 
-
+      /*busco la traducción de el verice izq si */
       for(u32 i = 1; i <= tam; i++) {
           if(G->tabla_trad[i] == izq) {
               trad_izq = i;
@@ -86,6 +121,11 @@ int LeerGrafo(GrafP G) {
               break;
           }
       }
+
+      /*Si trad_izq sigue en 0 es porque este vertice todavia no se a traducido
+        aumento tam en 1 y coloco el vertice en esa posición del arreglo 
+        y me quedo con su indice que va a ser la traduccion y el nombre del
+        vertice durante toda la ejecución del programa, tambien aumento su grado*/
 
       if(trad_izq == 0) {
           tam += 1;   
@@ -95,8 +135,10 @@ int LeerGrafo(GrafP G) {
         
       }
 
+      /*coloco la traducción en la tabla de vertices_izq */
       vertices_izq[i] = trad_izq; 
 
+      /*igual ahora pero para el vertice derecho*/
       for(u32 i = 1; i <= tam; i++) {
           if(G->tabla_trad[i] == der) {
               trad_der = i;
@@ -115,10 +157,17 @@ int LeerGrafo(GrafP G) {
       vertices_der[i] = trad_der;   
   }
   
+  /*En este punto ya he traducido todos los vertices y tengo el grado de cada 
+    uno, pido memoria para sus tablas de adyacencia usando su grado*/
   for(u32 i = 1; i <= G->n; i++) {
       G->list_ady_vert[i] = calloc(G->grado[i], sizeof(u32));
     }
-   
+
+
+  /*En este for , voy llenando las tablas de aydacencia de cada vertices 
+    ultilizando los arreglos auxliares de vertices izquieros y derechos 
+    que para un mismo indice son una arista*/ 
+    
   for(u32 i = 0; i < G->m ; i++) {
       izq = vertices_izq[i];
       der = vertices_der[i];
@@ -136,7 +185,6 @@ int LeerGrafo(GrafP G) {
   free(vertices_der);
   return n;
 }
-
 
 int ImprimeGrafo(GrafP G) {
 
@@ -368,13 +416,14 @@ u32 greedy_min_col(GrafP G , u32 vertice, u32 *tabla_aux) {
 }
 
 u32 DSATUR (GrafP G) {
-    u32 *dsatur;
-    u32 *tabla_aux;
-    u32 vertice;        
-    u32 coloractual;
-    u32 color_nuevo;
+    u32 *dsatur; // tabla para llevar el dsatur de cada vertice
+    u32 *tabla_aux; // tabla auxiliar necesaria para el coloreo greedy
+    u32 vertice; //vertice eligo para colorear     
+    u32 coloractual; // color que acabo de utilizar para colorear el vertice
+    u32 color_nuevo; // bandera que es 1 si el el color usado para colorear el 
+                     // es unuevo , 0 sino.
 
-    /* alojo memoria para llevar el dsatur */
+    /* alojo memoria para llevar el dsatur y la tabla auxiliar*/
 
     dsatur = calloc(G->n + 1, sizeof(u32));
     tabla_aux = calloc(G->n + 1, sizeof(u32));
@@ -388,17 +437,27 @@ u32 DSATUR (GrafP G) {
     } 
     G->colores_usados = 0;
 
-    /*Ordeno los vertices por grado*/
+    /*Ordeno los vertices por grado Welsh Powell*/
+    
 
     OrdenWelshPowell(G);
 
-    /*Coloreo dsatur*/     
+    /*En este for, en cada iteración se eligira el vertice de mayor dsatur(
+      si hay varios desempata con el grado), y se  actualiza el dsatur de cada
+      vecino del vertice coloreado en caso de ser necesario*/     
     for (u32 i = 1 ; i <= G->n ; i++) { 
 
-       /* busqueda del vertice de mayor dsatur y grado */
+       /************ busqueda del vertice de mayor dsatur y grado************ */
+       
+
         u32 max;
         max = G->orden[1];
 
+        /*En este for, recorro G->orden buscando el vertice de mayor dsatur como
+          G->orden esta ordenado Welsh Powell el primer vertice que encuentre 
+          con la mayor saturación tambien sera al mismo tiempo el de mayor grado
+          tambien verifico que el vertice que este tomando no este coloreado aún
+          */
         for(u32 j = 1; j <= G->n; j++) {
             if((G->coloreo[G->orden[j]] == 0) && dsatur[max] < dsatur[G->orden[j]]) {
                 max = G->orden[j];
@@ -407,11 +466,17 @@ u32 DSATUR (GrafP G) {
                 }
             }
         }
-
-        /*coloreo el vertice de la forma greedy*/
+            
+        /*************************coloreo de vertice***************************/       
         vertice = max;
+
+        /*coloreo el vertice de la forma greedy, tomando el minimo color no 
+          usado entre los colores de los vecinos*/
+
         G->coloreo[vertice] = greedy_min_col(G, vertice, tabla_aux);
         coloractual = G->coloreo[vertice];
+
+        /**********************************************************************/
 
         /*verifico si es un color nuevo y aumento colores usados en dicho caso*/
 
@@ -420,24 +485,41 @@ u32 DSATUR (GrafP G) {
             color_nuevo = 1;
         } else { 
             color_nuevo = 0;
+        
         }
+        /**********************************************************************/
 
-        /*actualización del dsatur de cada vecino del vertice*/
+        /*--------actualización del dsatur de cada vecino del vertice---------*/
+
+        /*En este for actualizo el dsatur de cada vecino del vertice en caso de 
+         ser necesario. Si el vecino ya fue coloreado no hace falta aumentar 
+         su dsatur por lo que no se actualiza. Si el vecino aún no ha sido 
+         coloreado entonces debo fijarme si alguno de los vecinos del vecino 
+         a actulizar fue coloreado con el mismo color, si esto pasa entonces no
+         debo aumentar su dsatur, si tengo que aumentarlo en el caso contrario. 
+         Si el color es nuevo ningun vecino del vecino puede haber sido
+         colereado con dicho color por lo que actualizo directamente saleantean_
+         dome la busqueda del color entre los vecinos del vecino a actualizar*/
+
         for(u32 j = 0; j < G->grado[vertice]; j++) {
             u32 vec = G->list_ady_vert[vertice][j];
-            u32 actualizar = 0;
+            u32 actualizar = 0;// es 0 si el vecino ya se ha coloreado, 1 sino
             
             if(G->coloreo[vec] == 0){
                 actualizar = 1;
             }
-            
+        
+            /* Si el color no es nuevo y si aun no se a coloreado este vertice
+             entro al if , en el for si encuentro un vecino distinto del 
+             vertice recien coloreado y que este coloreado con el mismo color
+             actualizo su dsatur*/
             if(!color_nuevo && actualizar) {    
-                for(u32 i = 0; i < G->grado[vec] ; i++) {     
-                    if(G->list_ady_vert[vec][i] == vertice || (G->coloreo[G->list_ady_vert[vec][i]] == coloractual)) {
+                for(u32 i = 0; i < G->grado[vec] ; i++) {  
+                    if(G->list_ady_vert[vec][i] != vertice && (G->coloreo[G->list_ady_vert[vec][i]] == coloractual)) {
                         actualizar = 0;
                         break;
                     }
-                }
+                 }
             }
                         
             if(actualizar) {
@@ -445,6 +527,7 @@ u32 DSATUR (GrafP G) {
             }
 
         }
+        /*********************************************************************/
     }
     
     free(dsatur);
@@ -453,6 +536,8 @@ u32 DSATUR (GrafP G) {
     return G->colores_usados;
 }
 
+
+/* hace un swap de el vertice en la posición i con el de la posicion j en la tabla*/
 void swap(u32 i, u32 j, u32* tabla) {
     u32 aux;
 
@@ -464,33 +549,66 @@ void swap(u32 i, u32 j, u32* tabla) {
 
 void OrdenAleatorio(GrafP G) {
 
-    u32* colores_aux = calloc(G->colores_usados + 1, sizeof(u32));
-    u32* orden_result = calloc(G->n + 1,sizeof(u32));
-    u32 pos_random, pos, tam, color;
-    tam = 0;
+     /* Genera un orden aleatorio de las clases de colores , de la siguiente
+     forma, en un array de tamaño cantidad colores usados : colores_aux , pone
+     todos los colores usados y en un for (que pasa por todos los indices de
+     de colores_aux) eligo una  posicion random y hago swap del color que esta 
+     en esa posicion random con la del color que esta en la posición i. Una vez
+     que tengo esta lista de colores ordenada de forma random, voy pasando todos 
+     los vertices en dicho orden de colores a un arreglo orden_result que sera
+     intercambiado con el orden que ya tenia el grafo. Al inicio corro orden 
+     GrandeChico para tener todos los vertices de un mismo color contiguos 
+     asi solo hace falta encontrar el inicio de cada color e y pasando todos los
+     vertices de dicho color a orden_result(poniendolos en el orden aleatorio 
+     generado)*/
+
+    u32* colores_aux = calloc(G->colores_usados + 1, sizeof(u32));// tabla donde voy desordenar los colores de forma random
+    u32* orden_result = calloc(G->n + 1,sizeof(u32)); // aca va el orden resultado 
+    u32 pos_random; // posicion random para hacer swap
+    u32 pos; // pos va a ser necesaria para encontrar el inicio de una clase de color
+    u32 tam = 0;//para llevar hasta donde tengo elementos en orden_result
+    u32 color;
 
     srand(time(NULL));
 
-    GrandeChico(G);
+    /*Ordeno Grande y chico al principio para tener todos vertices de una misma
+      clase contiguos(al final lo necesito)*/
 
+    GrandeChico(G);
+    
+    /*Lleno la tabla_aux con los colores ordenados de menor a mayor*/
     for(u32 i = 1; i <= G->colores_usados; i++) {
         colores_aux[i] = i;
     }
 
+    /*Desordeno la lista de colores en este for , haciendo swap del vertice 
+      en la posición i con uno en una posición random*/ 
     for(u32 i = 1 ; i <= G->colores_usados; i++) {
         pos_random = (rand() % G->colores_usados) + 1;
         swap(i , pos_random, colores_aux);
     }
+
+
+    /*En este punto ya tengo un orden random de los colores, ahora voy a 
+      ir pasando a el arreglo orden_result todos los vertices del mismo color
+      en el orden que tengo en colores_aux*/
+
+    /*En este for voy a ir pasando todos los vertices de cada clase de color 
+      en el nuevo orden*/
+
     for(u32 i = 1; i <= G->colores_usados; i++) {
         color = colores_aux[i];
         pos = 1;
-
+        
+        /*recorro G->orden buscando el comienzo de la clase de color */
         for(u32 j = 1; j <= G->n; j++) {
             if(G->coloreo[G->orden[j]] == color) {
                pos = j;
                break;
             }
         }
+        /*pongo en el array todos los vertices con ese color y paro el while
+          cuando llego a vertice que arranca la proxima clase de color*/
         while(G->coloreo[G->orden[pos]] == color && pos <= G->n) {
             tam = tam + 1;
             orden_result[tam] = G->orden[pos];
@@ -498,9 +616,10 @@ void OrdenAleatorio(GrafP G) {
         }
      
     }
+
+    /*descarto el antiguo orden y lo reemplazo por el nuevo*/
     free(G->orden);
     G->orden = orden_result;
     free(colores_aux);  
  
 }
-
