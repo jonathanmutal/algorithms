@@ -17,6 +17,10 @@ GrafP NuevoGraf(void) {
 }
 
 int DestruirGraf(GrafP G) {
+
+    if(G == NULL)
+        return 0;
+
     for(u32 i = 1; i <= G->n; i++) free(G->list_ady_vert[i]);
     free(G->list_ady_vert);
     free(G->orden);
@@ -135,6 +139,11 @@ int LeerGrafo(GrafP G) {
 
 
 int ImprimeGrafo(GrafP G) {
+
+    if(G == NULL) {
+        return 0;
+    }
+
     printf("p edge %u %u\n", G->n, G->m);
 
     for(u32 i = 1; i <= G->n; i++) {
