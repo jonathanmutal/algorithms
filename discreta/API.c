@@ -440,3 +440,55 @@ u32 DSATUR (GrafP G) {
 
     return G->colores_usados;
 }
+
+void swap(u32 i, u32 j, u32* tabla) {
+    u32 aux;
+
+    aux = tabla[i];
+    tabla[i] = tabla[j];
+    tabla[j] = aux;
+}
+
+
+void OrdenAleatorio(GrafP G) {
+
+    u32* colores_aux = calloc(G->colores_usados + 1, sizeof(u32));
+    u32* orden_result = calloc(G->n + 1,sizeof(u32));
+    u32 pos_random, pos, tam, color;
+    tam = 0;
+
+    srand(time(NULL));
+
+    GrandeChico(G);
+
+    for(u32 i = 1; i <= G->colores_usados; i++) {
+        colores_aux[i] = i;
+    }
+
+    for(u32 i = 1 ; i <= G->colores_usados; i++) {
+        pos_random = (rand() % G->colores_usados) + 1;
+        swap(i , pos_random, colores_aux);
+    }
+    for(u32 i = 1; i <= G->colores_usados; i++) {
+        color = colores_aux[i];
+        pos = 1;
+
+        for(u32 j = 1; j <= G->n; j++) {
+            if(G->coloreo[G->orden[j]] == color) {
+               pos = j;
+               break;
+            }
+        }
+        while(G->coloreo[G->orden[pos]] == color && pos <= G->n) {
+            tam = tam + 1;
+            orden_result[tam] = G->orden[pos];
+            pos = pos + 1;
+        }
+     
+    }
+    free(G->orden);
+    G->orden = orden_result;
+    free(colores_aux);  
+ 
+}
+
