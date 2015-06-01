@@ -81,6 +81,7 @@ void radixSort(u32 *array, u32 *orden, u32 size){
     * Adquiere los índices después del final de cada ubicación de bucket.
     * Ordenamos del último elemento al primero del array_aux.
     * En bucket estara almacenada las posiciones de cada número(ordenada por el dígito).
+    * Una vez que el elemento ya esta en su respectiva posición, disminuimos bucket del dígito, para el próximo número.
     */
 
     for (i = size; i > 0; i--){
